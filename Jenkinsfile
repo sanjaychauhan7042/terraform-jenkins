@@ -21,7 +21,6 @@ pipeline {
         stage('Plan') {
             steps {
                 sh '''
-                    cd terraform/
                     terraform init
                     terraform plan -out tfplan
                     terraform show -no-color tfplan > tfplan.txt
