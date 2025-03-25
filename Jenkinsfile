@@ -14,40 +14,43 @@ pipeline {
     stages {
 
         stage('Checkout') {
-    steps {
-        git branch: 'main', url: 'https://github.com/sanjaychauhan7042/terraform-jenkins.git'
-    }
-}
+            steps {
+                git branch: 'main', url: 'https://github.com/sanjaychauhan7042/terraform-jenkins.git'
+            }
+        }
+
         stage('Plan') {
-    steps {
-        sh '''
-            terraform init
-            terraform plan -out=tfplan
-            terraform show -no-color tfplan > tfplan.txt
-        '''
-    }
-}
-
-stage('Approval') {
-    when {
-        not {
-            equals expected: true, actual: params.autoApprove
+            steps {
+                sh '''
+                    terraform init
+                    terraform plan -out=tfplan
+                    terraform show -no-color tfplan > tfplan.txt
+                '''
+            }
         }
-    }
-    steps {
-        script {
-            def plan = readFile 'tfplan.txt'
-            input message: "Do you want to apply the plan?",
-                parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-        }
-    }
-}
 
-stage('Apply') {
-    steps {
-        sh '''
-            terraform apply -input=false tfplan
-        '''
+        stage('Approval') {
+            when {
+                not {
+                    equals expected: true, actual: params.autoApprove
+                }
+            }
+            steps {
+                script {
+                    def plan = readFile 'tfplan.txt'
+                    input message: "Do you want to apply the plan?",
+                        parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+                }
+            }
+        }
+
+        stage('Apply') {
+            steps {
+                sh '''
+                    terraform apply -input=false tfplan
+                '''
+            }
+        }
     }
 }
 
