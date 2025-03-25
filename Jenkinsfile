@@ -14,11 +14,10 @@ pipeline {
     stages {
 
         stage('Checkout') {
-            steps {
-                git "https://github.com/sanjaychauhan7042/terraform-jenkins.git"
-            }
-        }
-
+    steps {
+        git branch: 'main', url: 'https://github.com/sanjaychauhan7042/terraform-jenkins.git'
+    }
+}
         stage('Plan') {
             steps {
                 sh '''
